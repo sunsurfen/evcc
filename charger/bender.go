@@ -286,7 +286,7 @@ func (wb *BenderCC) MaxCurrent(current int64) error {
 	}
 
 	if wb.model == "4you" {
-		return wb.MaxCurrentMillis(float64(160))
+		return wb.MaxCurrentMillis(float64(16.0))
 	}
 
 	b := make([]byte, 2)
