@@ -143,8 +143,8 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 		currentPower = wb.currentPower
 		//currents = wb.currents
 		currents = func() (float64, float64, float64, error) {
-    return 16, 16, 16, nil
-}
+                             return 16, 16, 16, nil
+                         }
 		totalEnergy = wb.totalEnergy
 
 		// check presence of "ocpp meter"
