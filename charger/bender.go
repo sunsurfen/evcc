@@ -117,7 +117,7 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 	bModel, err := wb.conn.ReadHoldingRegisters(bendRegChargePointModel, 10)
 	if err != nil {
 		wb.legacy = true
-		wb.model = "bender"
+		wb.model = "4you"
 	} else {
 		if strings.Contains(strings.ToLower(string(bModel[:])), "4you") {
 			wb.model = "4you"
@@ -141,7 +141,7 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 
 	if b, err := wb.conn.ReadHoldingRegisters(reg, 2); err == nil && binary.BigEndian.Uint32(b) != math.MaxUint32 {
 		currentPower = wb.currentPower
-		currents = 16 //wb.currents
+		currents = wb.currents
 		totalEnergy = wb.totalEnergy
 
 		// check presence of "ocpp meter"
