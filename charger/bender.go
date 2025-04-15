@@ -141,7 +141,10 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 
 	if b, err := wb.conn.ReadHoldingRegisters(reg, 2); err == nil && binary.BigEndian.Uint32(b) != math.MaxUint32 {
 		currentPower = wb.currentPower
-		currents = wb.currents
+		//currents = wb.currents
+		currents = func() (float64, float64, float64, error) {
+    return 16, 16, 16, nil
+}
 		totalEnergy = wb.totalEnergy
 
 		// check presence of "ocpp meter"
