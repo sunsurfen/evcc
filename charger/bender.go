@@ -141,7 +141,32 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 
 	if b, err := wb.conn.ReadHoldingRegisters(reg, 2); err == nil && binary.BigEndian.Uint32(b) != math.MaxUint32 {
 		currentPower = wb.currentPower
-		currents = wb.currents
+		//currents = wb.currents
+		currents 
+	var (
+		currentPower func() (float64, error)
+		currents     func() (float64, float64, float64, error)
+		voltages     func() (float64, float64, float64, error)
+		totalEnergy  func() (float64, error)
+		soc          func() (float64, error)
+		identify     func() (string, error)
+	)
+
+	// check presence of metering
+	reg := uint16(bendRegActivePower)
+	if wb.legacy {
+		reg = bendRegPhaseEnergy
+	}
+
+	if b, err := wb.conn.ReadHoldingRegisters(reg, 2); err == nil && binary.BigEndian.Uint32(b) != math.MaxUint32 {
+		currentPower = wb.currentPower
+		//currents = wb.currents
+		currents = func() (float64, float64, float64, error) {
+    return 16, 16, 16, nil
+}
+		totalEnergy = wb.totalEnergy:= func() (float64, float64, float64, error) {
+    return 16, 16, 16, nil
+}
 		totalEnergy = wb.totalEnergy
 
 		// check presence of "ocpp meter"
