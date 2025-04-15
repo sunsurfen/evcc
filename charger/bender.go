@@ -58,8 +58,8 @@ const (
 	bendRegUserID             = 720  // User ID (OCPP IdTag) from the current session. Bytes 0 to 19.
 	bendRegEVBatteryState     = 730  // EV Battery State (% 0-100)
 	bendRegEVCCID             = 741  // ASCII representation of the Hex. Values corresponding to the EVCCID. Bytes 0 to 11.
-	//bendRegHemsCurrentLimit   = 1000 // Current limit of the HEMS module (A)
-	//amtronRegHemsCurrentLimit = 1000 // Current limit of the HEMS module (0.1 A) only used for Amtron 4You
+	bendRegHemsCurrentLimit   = 1000 // Current limit of the HEMS module (A)
+	amtronRegHemsCurrentLimit = 1000 // Current limit of the HEMS module (0.1 A) only used for Amtron 4You
 	amtronRegHemsPowerLimit   = 1002 // Power limit of the HEMS module (W) only used for Amtron 4You
 
 	bendRegFirmware             = 100 // Application version number
