@@ -59,7 +59,7 @@ const (
 	bendRegEVBatteryState     = 730  // EV Battery State (% 0-100)
 	bendRegEVCCID             = 741  // ASCII representation of the Hex. Values corresponding to the EVCCID. Bytes 0 to 11.
 	bendRegHemsCurrentLimit   = 1000 // Current limit of the HEMS module (A)
-	amtronRegHemsCurrentLimit = 1000 // Current limit of the HEMS module (0.1 A) only used for Amtron 4You
+	amtronRegHemsCurrentLimit = 1001 // Current limit of the HEMS module (0.1 A) only used for Amtron 4You
 	amtronRegHemsPowerLimit   = 1002 // Power limit of the HEMS module (W) only used for Amtron 4You
 
 	bendRegFirmware             = 100 // Application version number
@@ -116,7 +116,7 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 	// check legacy register set and if the wb is a Mennekes Amtron 4You
 	bModel, err := wb.conn.ReadHoldingRegisters(bendRegChargePointModel, 10)
 	if err != nil {
-		//wb.legacy = true
+		wb.legacy = false
 		wb.model = "4you"
 	} else {
 		if strings.Contains(strings.ToLower(string(bModel[:])), "4you") {
@@ -141,10 +141,7 @@ func NewBenderCC(ctx context.Context, uri string, id uint8) (api.Charger, error)
 
 	if b, err := wb.conn.ReadHoldingRegisters(reg, 2); err == nil && binary.BigEndian.Uint32(b) != math.MaxUint32 {
 		currentPower = wb.currentPower
-		//currents = wb.currents
-		currents = func() (float64, float64, float64, error) {
-                             return 16, 16, 16, nil
-                         }
+		currents = wb.currents
 		totalEnergy = wb.totalEnergy
 
 		// check presence of "ocpp meter"
@@ -247,6 +244,13 @@ func (wb *BenderCC) Enable(enable bool) error {
 
 		_, err := wb.conn.WriteMultipleRegisters(amtronRegHemsPowerLimit, 1, b)
 
+		b := make([]byte, 2)
+		if enable {
+			binary.BigEndian.PutUint16(b, uint16(wb.current))
+		}
+		
+		_, err := wb.conn.WriteMultipleRegisters(bendRegHemsCurrentLimit, 1, b)
+	
 		return err
 	}
 }
@@ -282,11 +286,11 @@ func (wb *BenderCC) MaxCurrent(current int64) error {
 	}
 
 	if wb.model == "4you" {
-		return wb.MaxCurrentMillis(float64(current))
+		return wb.MaxCurrentMillis(float64(160))
 	}
 
 	b := make([]byte, 2)
-	binary.BigEndian.PutUint16(b, uint16(current))
+	binary.BigEndian.PutUint16(b, uint16(16))
 
 	_, err := wb.conn.WriteMultipleRegisters(bendRegHemsCurrentLimit, 1, b)
 	if err == nil {
